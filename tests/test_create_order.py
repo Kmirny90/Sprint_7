@@ -12,13 +12,18 @@ class TestCreateOrder:
         ["BLACK", "GREY"]
     ])
     @allure.title("Создание заказа с цветом {color}")
-    def test_create_order_with_different_colors(self, color_data):
-        order_data = ORDER_BODY.copy()
-        order_data["color"] = color_data
+    def test_create_order_with_different_colors(self, color_data, created_order):
+        with allure.step("Подготовка данных заказа"):
+            order_data = ORDER_BODY.copy()
+            order_data["color"] = color_data
 
-        response = OrderMethods.create_order(order_data)
+        with allure.step("Отправка запроса на создание заказа"):
+            response = OrderMethods.create_order(order_data)
 
-        assert response.status_code == 201
-        assert "track" in response.json()
+        with allure.step("Проверка ответа"):
+            assert response.status_code == 201
+            assert "track" in response.json()
 
-        OrderMethods.cancel_order(response.json()["track"])
+        created_order.append(response.json()["track"])
+
+

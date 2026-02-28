@@ -46,16 +46,14 @@ def created_courier(random_courier_data):
 
 @pytest.fixture
 def created_order():
+    orders_to_clean = []
 
-    with allure.step("Создание заказа через фикстуру"):
-        order_data = generate_order_body()
-        response = OrderMethods.create_order(order_data)
-        track = response.json()['track']
+    yield orders_to_clean
 
-        yield track
-
-        with allure.step("Отмена заказа после теста"):
+    for track in orders_to_clean:
+        with allure.step(f"Отмена заказа {track} после теста"):
             OrderMethods.cancel_order(track)
+
 
 @pytest.fixture
 def order_data_without_color():
