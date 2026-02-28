@@ -19,6 +19,11 @@ def random_courier_data():
         CourierMethods.delete_courier(courier_id)
 
 @pytest.fixture
+def created_courier_data(random_courier_data):
+    CourierMethods.create_courier(random_courier_data)
+    return random_courier_data
+
+@pytest.fixture
 def created_courier(random_courier_data):
 
     with allure.step("Создание курьера через фикстуру"):
