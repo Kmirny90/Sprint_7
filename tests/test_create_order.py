@@ -5,12 +5,16 @@ from data.order_data import *
 
 
 class TestCreateOrder:
-    @pytest.mark.parametrize("color", COLOR_VARIANTS)
+    @pytest.mark.parametrize("color_data", [
+        [],
+        ["BLACK"],
+        ["GREY"],
+        ["BLACK", "GREY"]
+    ])
     @allure.title("Создание заказа с цветом {color}")
-    def test_create_order_with_different_colors(self, color):
+    def test_create_order_with_different_colors(self, color_data):
         order_data = ORDER_BODY.copy()
-        if color:
-            order_data["color"] = color
+        order_data["color"] = color_data
 
         response = OrderMethods.create_order(order_data)
 
