@@ -9,21 +9,9 @@ class TestCreateCourier:
     @allure.title("Успешное создание курьера")
     @allure.description("Проверка, что курьера можно создать с валидными данными")
     def test_create_courier_success(self, random_courier_data):
-        with allure.step("Отправляем запрос на создание курьера"):
-            response = CourierMethods.create_courier(random_courier_data)
-
+        response = CourierMethods.create_courier(random_courier_data)
         assert response.status_code == 201
         assert response.json() == {"ok": True}
-
-        with allure.step("Получаем ID курьера для удаления"):
-            auth_response = CourierMethods.login_courier(
-                random_courier_data['login'],
-                random_courier_data['password']
-            )
-            courier_id = auth_response.json()['id']
-
-        with allure.step("Удаляем курьера"):
-            CourierMethods.delete_courier(courier_id)
 
     @allure.title("Нельзя создать двух одинаковых курьеров")
     @allure.description("Проверка, что повторное создание курьера с теми же данными возвращает ошибку")
@@ -37,16 +25,6 @@ class TestCreateCourier:
 
         assert response2.status_code == 409
         assert response2.json()["message"] == ERROR_MESSAGES["login_already_used"]
-
-        with allure.step("Получаем ID курьера для удаления"):
-            auth_response = CourierMethods.login_courier(
-                random_courier_data['login'],
-                random_courier_data['password']
-            )
-            courier_id = auth_response.json()['id']
-
-        with allure.step("Удаляем курьера"):
-            CourierMethods.delete_courier(courier_id)
 
     @pytest.mark.parametrize("missing_field", ["login", "password"])
     @allure.title("Создание курьера без поля {missing_field}")
@@ -91,10 +69,3 @@ class TestCreateCourier:
         assert response2.status_code == 409
         assert response2.json()["message"] == ERROR_MESSAGES["login_already_used"]
 
-        with allure.step("Получаем ID первого курьера и удаляем его"):
-            auth_response = CourierMethods.login_courier(
-                random_courier_data['login'],
-                random_courier_data['password']
-            )
-            courier_id = auth_response.json()['id']
-            CourierMethods.delete_courier(courier_id)

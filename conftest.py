@@ -7,8 +7,16 @@ from api_methods.order_methods import OrderMethods
 
 @pytest.fixture
 def random_courier_data():
+    courier_data = generate_couriers_body()
+    yield courier_data
 
-    return generate_couriers_body()
+    response = CourierMethods.login_courier(
+        courier_data['login'],
+        courier_data['password']
+    )
+    if response.status_code == 200:
+        courier_id = response.json()['id']
+        CourierMethods.delete_courier(courier_id)
 
 @pytest.fixture
 def created_courier(random_courier_data):
